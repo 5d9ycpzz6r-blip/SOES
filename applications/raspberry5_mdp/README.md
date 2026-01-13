@@ -19,18 +19,17 @@
 - Библиотека bcm2835 для работы с GPIO
 - CMake 2.8.12 или выше
 
-## Компиляция
+## Компиляция (Raspberry Pi 5)
+
+На Pi 5 используйте Linux HAL и стандартный spidev:
 
 ```bash
-# Установите переменную окружения для выбора демо
-export RPI_VARIANT=1
-
 # Создайте директорию сборки
 mkdir build
 cd build
 
-# Настройте CMake
-cmake ..
+# Настройте CMake: выбираем Linux HAL (RPI_VARIANT=0)
+cmake -DRPI_VARIANT=0 ..
 
 # Соберите проект
 make
@@ -46,9 +45,9 @@ sudo make install
 По умолчанию используется SPI интерфейс с CS0:
 - SPI0_CS0 (GPIO 8)
 
-Для изменения используйте параметр `user_arg` в `main.c`:
+Для Pi 5 используйте spidev:
 ```c
-.user_arg = "rpi5,cs0",  // или "rpi5,cs1" для CS1
+.user_arg = "/dev/spidev10.0"
 ```
 
 ### GPIO подключения
