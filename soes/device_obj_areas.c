@@ -50,31 +50,31 @@ static const char acNameF002_01[] = "Command";
 
 /* 0xF00E: Module PDO Group Mapping Alignment PDO Number */
 static const char acNameF00E[]    = "Module PDO Group Mapping Alignment PDO Number";
-static const char acNameF00E_0x[] = "Alignment PDO";
+//static const char acNameF00E_0x[] = "Alignment PDO";
 
 /* 0xF00F: Module PDO Group Mapping Alignment */
 static const char acNameF00F[]    = "Module PDO Group Mapping Alignment";
-static const char acNameF00F_0x[] = "Alignment";
+//static const char acNameF00F_0x[] = "Alignment";
 
 /* 0xF010-0xF01F: Module Profile List */
 static const char acNameF010[]    = "Module Profile List";
-static const char acNameF010_0x[] = "Profile";
+//static const char acNameF010_0x[] = "Profile";
 
 /* 0xF020-0xF02F: Address list of the configured Modules */
 static const char acNameF020[]    = "Address list of the configured Modules";
-static const char acNameF020_0x[] = "Module address";
+//static const char acNameF020_0x[] = "Module address";
 
 /* 0xF030-0xF03F: Module Ident list of the configured Modules */
 static const char acNameF030[]    = "Module Ident list of the configured Modules";
-static const char acNameF030_0x[] = "Module ident";
+//static const char acNameF030_0x[] = "Module ident";
 
 /* 0xF040-0xF04F: Address list of detected Modules */
 static const char acNameF040[]    = "Address list of detected Modules";
-static const char acNameF040_0x[] = "Module address";
+//static const char acNameF040_0x[] = "Module address";
 
 /* 0xF050-0xF05F: Module Ident list of detected Modules */
 static const char acNameF050[]    = "Module Ident list of detected Modules";
-static const char acNameF050_0x[] = "Module ident";
+//static const char acNameF050_0x[] = "Module ident";
 
 /* 0xF100-0xF10F: Device Status */
 static const char acNameF100[]    = "Device Status";
@@ -424,7 +424,7 @@ static char module_subindex_00[] = "Number of Entries";
 static char module_subindex_01[] = "Data";
 
 static uint16_t mdp_get_profile_list_entry(uint8_t subindex) {
-    if (subindex == 0 || subindex > MAX_MDP_SLOTS) {
+    if (subindex == 0) {
         return 0;
     }
     uint8_t slot = subindex - 1;
@@ -436,7 +436,7 @@ static uint16_t mdp_get_profile_list_entry(uint8_t subindex) {
 }
 
 static uint16_t mdp_get_config_address_entry(uint8_t subindex) {
-    if (subindex == 0 || subindex > MAX_MDP_SLOTS) {
+    if (subindex == 0) {
         return 0;
     }
     uint8_t slot = subindex - 1;
@@ -444,11 +444,11 @@ static uint16_t mdp_get_config_address_entry(uint8_t subindex) {
         return 0;
     }
     /* Calculate address based on slot number */
-    return MDP_INPUT_AREA_START + (slot * MDP_INDEX_STEP);
+    return (uint16_t)(MDP_INPUT_AREA_START + (slot * MDP_INDEX_STEP));
 }
 
 static uint32_t mdp_get_config_ident_entry(uint8_t subindex) {
-    if (subindex == 0 || subindex > MAX_MDP_SLOTS) {
+    if (subindex == 0) {
         return 0;
     }
     uint8_t slot = subindex - 1;
@@ -538,7 +538,7 @@ static uint16_t calculate_module_index(uint8_t slot, uint8_t area_type) {
         default: return 0xFFFF;
     }
     
-    return base_addr + (slot * MDP_INDEX_STEP);
+    return (uint16_t)(base_addr + (slot * MDP_INDEX_STEP));
 }
 
 int device_obj_areas_add_module_entry(uint8_t slot, uint8_t area_type,
@@ -790,7 +790,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
     /* Handle array elements based on index */
     switch (index) {
         case 0xF010: /* Module Profile List */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value16 = mdp_get_profile_list_entry(subindex);
                 if (data_ptr && *data_size >= 2) {
                 *(uint16_t*)data_ptr = value16;
@@ -801,7 +801,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF020: /* Address list of configured Modules */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value16 = mdp_get_config_address_entry(subindex);
                 if (data_ptr && *data_size >= 2) {
                 *(uint16_t*)data_ptr = value16;
@@ -812,7 +812,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF030: /* Module Ident list of configured Modules */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value32 = mdp_get_config_ident_entry(subindex);
                 if (data_ptr && *data_size >= 4) {
                 *(uint32_t*)data_ptr = value32;
@@ -823,7 +823,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF040: /* Address list of detected Modules */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value16 = mdp_get_detect_address_entry(subindex);
                 if (data_ptr && *data_size >= 2) {
                 *(uint16_t*)data_ptr = value16;
@@ -834,7 +834,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF050: /* Module Ident list of detected Modules */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value32 = mdp_get_detect_ident_entry(subindex);
                 if (data_ptr && *data_size >= 4) {
                 *(uint32_t*)data_ptr = value32;
@@ -845,7 +845,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF00E: /* Module PDO Group Mapping Alignment PDO Number */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value16 = mdp_get_alignment_pdo_entry(subindex);
                 if (data_ptr && *data_size >= 2) {
                 *(uint16_t*)data_ptr = value16;
@@ -856,7 +856,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
             break;
             
         case 0xF00F: /* Module PDO Group Mapping Alignment */
-            if (subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+            if (subindex > 0) {
                 value16 = mdp_get_alignment_entry(subindex);
                 if (data_ptr && *data_size >= 2) {
                 *(uint16_t*)data_ptr = value16;
@@ -873,7 +873,7 @@ int device_obj_areas_read_array_element(uint16_t index, uint8_t subindex,
 int device_obj_areas_write_array_element(uint16_t index, uint8_t subindex,
                                          void *data_ptr, uint16_t data_size) {
     /* For now, only 0xF030 (Module Ident list) supports write */
-    if (index == 0xF030 && subindex > 0 && subindex <= MAX_MDP_SLOTS) {
+    if (index == 0xF030 && subindex > 0) {
         uint8_t slot = subindex - 1;
         if (slot < MAX_MDP_SLOTS && data_size == 4) {
             mdp_slots[slot].module_ident = *(uint32_t*)data_ptr;

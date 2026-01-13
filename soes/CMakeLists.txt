@@ -22,7 +22,7 @@ add_library (soes
   )
 
 include_directories(${HAL_INCLUDES})
-target_include_directories(soes PUBLIC include/sys/gcc)#//TODO #fix compilation bug.
+target_include_directories(soes PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/sys/gcc)
 
 install (TARGETS soes DESTINATION bin)
 install (FILES

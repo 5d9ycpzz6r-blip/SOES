@@ -269,7 +269,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
             temp_u8 = MAX_MDP_SLOTS;
             data_ptr = &temp_u8; data_len = 1;
         }
-        else if (subindex >= 1 && subindex <= MAX_MDP_SLOTS) {
+        else if (subindex >= 1) {
             // Subindex N: Module identifier for slot (N-1)
             // Returns 0 if slot is empty (not configured)
             slot = subindex - 1;
@@ -303,7 +303,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
             // Subindex 1: Input data
             // Returns the input data for this module slot
             data_ptr = (uint8_t*)mdp_slots[slot].input_data;
-            data_len = (mdp_slots[slot].input_size + 7) / 8; // Convert bits to bytes
+            data_len = (uint16_t)((mdp_slots[slot].input_size + 7) / 8); // Convert bits to bytes
         } else {
              *abort_code = 0x06020000; // Sub-index does not exist
              return 0;
@@ -324,7 +324,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
             // Subindex 1: Output data
             // Returns the output data for this module slot
             data_ptr = (uint8_t*)mdp_slots[slot].output_data;
-            data_len = (mdp_slots[slot].output_size + 7) / 8; // Convert bits to bytes
+            data_len = (uint16_t)((mdp_slots[slot].output_size + 7) / 8); // Convert bits to bytes
         } else {
              *abort_code = 0x06020000; // Sub-index does not exist
              return 0;
@@ -357,7 +357,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
                 return 1; // Callback handled the data
             } else if (mdp_slots[slot].configuration_data) {
                 data_ptr = (uint8_t*)mdp_slots[slot].configuration_data;
-                data_len = (mdp_slots[slot].configuration_size + 7) / 8;
+                data_len = (uint16_t)((mdp_slots[slot].configuration_size + 7) / 8);
             } else {
                 *abort_code = 0x06020000;
                 return 0;
@@ -478,7 +478,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
                 return 1; // Callback handled the data
             } else if (mdp_slots[slot].diagnosis_data) {
                 data_ptr = (uint8_t*)mdp_slots[slot].diagnosis_data;
-                data_len = (mdp_slots[slot].diagnosis_size + 7) / 8;
+                data_len = (uint16_t)((mdp_slots[slot].diagnosis_size + 7) / 8);
             } else {
                 *abort_code = 0x06020000;
                 return 0;
@@ -516,7 +516,7 @@ uint32_t MDP_read_access(uint16_t index, uint8_t subindex, uint16_t *size, void 
                 return 1; // Callback handled the data
             } else if (mdp_slots[slot].service_transfer) {
                 data_ptr = (uint8_t*)mdp_slots[slot].service_transfer;
-                data_len = (mdp_slots[slot].service_size + 7) / 8;
+                data_len = (uint16_t)((mdp_slots[slot].service_size + 7) / 8);
             } else {
                 *abort_code = 0x06020000;
                 return 0;
@@ -550,7 +550,7 @@ uint32_t MDP_write_access(uint16_t index, uint8_t subindex, uint16_t size, void 
     // --- OUTPUTS (0x7nn0) ---
     if ((slot = get_slot_from_index(index, MDP_OUTPUT_AREA_START)) >= 0) {
         if (subindex == 0x01 && mdp_slots[slot].output_data) {
-            uint16_t slot_len = (mdp_slots[slot].output_size + 7) / 8;
+            uint16_t slot_len = (uint16_t)((mdp_slots[slot].output_size + 7) / 8);
             if (size > slot_len) {
                  *abort_code = 0x06070010;
                  return 0;
@@ -576,7 +576,7 @@ uint32_t MDP_write_access(uint16_t index, uint8_t subindex, uint16_t size, void 
                 }
                 return 1; // Callback handled the write
             } else if (mdp_slots[slot].configuration_data) {
-                uint16_t slot_len = (mdp_slots[slot].configuration_size + 7) / 8;
+                uint16_t slot_len = (uint16_t)((mdp_slots[slot].configuration_size + 7) / 8);
                 if (size > slot_len) {
                     *abort_code = 0x06070010;
                     return 0;
@@ -607,7 +607,7 @@ uint32_t MDP_write_access(uint16_t index, uint8_t subindex, uint16_t size, void 
                 }
                 return 1; // Callback handled the write
             } else if (mdp_slots[slot].service_transfer) {
-                uint16_t slot_len = (mdp_slots[slot].service_size + 7) / 8;
+                uint16_t slot_len = (uint16_t)((mdp_slots[slot].service_size + 7) / 8);
                 if (size > slot_len) {
                     *abort_code = 0x06070010;
                     return 0;
